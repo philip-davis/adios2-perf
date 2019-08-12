@@ -1,0 +1,6 @@
+[submodule "ADIOS2"]
+	path = ADIOS2
+	url = https://github.com/ornladios/ADIOS2.git
+[submodule "adiosvm"]
+	path = adiosvm
+	url = https://github.com/pnorbert/adiosvm.git
