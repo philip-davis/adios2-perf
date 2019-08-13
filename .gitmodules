@@ -4,3 +4,6 @@
 [submodule "adiosvm"]
 	path = adiosvm
 	url = https://github.com/pnorbert/adiosvm.git
+[submodule "libfabric"]
+	path = libfabric
+	url = https://github.com/ofiwg/libfabric.git
