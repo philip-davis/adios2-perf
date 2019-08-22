@@ -1,6 +1,10 @@
+<<<<<<< HEAD
+MACHINE=theta
+=======
 #!/bin/bash
 
 MACHINE=cori
+>>>>>>> 3334651b9f2c23fc9dcf801c921ca6bf67e88068
 
 INSTALL_DIR=${PWD}/install
 ADIOS2_DIR=${INSTALL_DIR}/ADIOS2
@@ -11,6 +15,13 @@ if [ "${MACHINE}" == "cori" ] ; then
     module load cmake/3.14.4
     module load python/3.6-anaconda-4.4
     export CRAYPE_LINK_TYPE=dynamic
+    export CC=cc
+    export CXX=CC
+    export FC=ftn
+elif [ "${MACHINE}" == "theta" ] ; then
+    module unload darshan
+    module load cmake/3.14.5
+    module load cray-python/3.6.5.3
     export CC=cc
     export CXX=CC
     export FC=ftn

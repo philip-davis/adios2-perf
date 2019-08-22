@@ -1,5 +1,7 @@
 #!/bin/bash
 
+MACHINE=theta
+
 SCALING=$1
 SIZE=$2
 ENGINE=$3
@@ -33,11 +35,28 @@ if [ ! -d $DIR_NAME ] ; then
     mkdir $DIR_NAME
 fi
 
+if [ ${NNODES} -lt 128 ] ; then
+    NNODES=128
+fi
+
+HEADER=cfg/${MACHINE}/header
+if [ ! -f ${HEADER} ] ; then
+    echo "No header file file for ${MACHINE}"
+    exit
+fi
+
 export NNODES
-envsubst '${NNODES}' < cfg/cori.header > $DIR_NAME/job.sh
+envsubst '${NNODES}' < ${HEADER} > $DIR_NAME/job.sh
+
+
+JOBTEMPL=cfg/${MACHINE}/job.${ENGINE}
+if [ ! -f ${JOBTEMPL} ] ; then
+    echo "No job script template for ${MACHINE} and ${ENGINE}"
+    exit
+fi
 
 export WNODES RNODES NWRITERS NREADERS
-envsubst '$WNODES $RNODES $NWRITERS $NREADERS' < cfg/job.${ENGINE} >> $DIR_NAME/job.sh
+envsubst '$WNODES $RNODES $NWRITERS $NREADERS' < ${JOBTEMPL} >> $DIR_NAME/job.sh
 
 export SIZE ENGINE
 envsubst '$SIZE $ENGINE' < cfg/cfg.json > $DIR_NAME/cfg.json

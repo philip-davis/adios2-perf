@@ -1,0 +1,8 @@
+#!/bin/bash
+#COBALT -t 30
+#COBALT -n ${NNODES}
+#COBALT --attrs mcdram=cache:numa=quad
+#COBALT -A CSC250STDM11
+#COBALT --queue default
+
+export PATH=$PATH:/projects/CSC250STDM11/pdavis/adios2-perf/adiosvm/Tutorial/gray-scott/build
