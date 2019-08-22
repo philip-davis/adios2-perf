@@ -7,3 +7,7 @@
 [submodule "libfabric"]
 	path = libfabric
 	url = https://github.com/ofiwg/libfabric.git
+	branch = v1.7.x
+[submodule "tau2"]
+	path = tau2
+	url = https://github.com/UO-OACISS/tau2.git

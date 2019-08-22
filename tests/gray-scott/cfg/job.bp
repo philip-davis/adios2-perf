@@ -1,0 +1,6 @@
+rm -rf *.bp
+
+echo "WF Start: $(date +%s)"
+srun -n ${NWRITERS} -N ${WNODES} gray-scott cfg.json
+srun -n ${NREADERS} -N ${RNODES} pdf_calc gs.bp pdf.bp 100
+echo "WF Finish: $(date +%s)"
