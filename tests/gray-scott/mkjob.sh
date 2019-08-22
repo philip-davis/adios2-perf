@@ -3,19 +3,18 @@
 MACHINE=theta
 
 SCALING=$1
-ENGINE=$2
-NWRITERS=$3
-
-SIZE=
+SIZE=$2
+ENGINE=$3
+NWRITERS=$4
 
 if [ "$SCALING" == "strong" ] ; then
-    SIZE=128
+    LEN=$SIZE
 elif [ "$SCALING" == "weak" ] ; then
-    SIZE=128
-    while [ $((SIZE * SIZE * SIZE)) -lt $((128 * 128 * NWRITERS)) ] ; do
-        SIZE=$((SIZE + 32))
+    LEN=128
+    while [ $((LEN * LEN * LEN)) -lt $((SIZE * NWRITERS)) ] ; do
+        LEN=$((LEN + 32))
     done
-    if [ $((SIZE * SIZE * SIZE)) -gt $((128 * 128 * NWRITERS)) ] ; then
+    if [ $((LEN * LEN * LEN)) -gt $((SIZE * NWRITERS)) ] ; then
         echo "bad nwriter!"
         exit
     fi
@@ -30,7 +29,7 @@ while [ $((32 * RNODES)) -lt $NREADERS ] ; do
 done
 
 NNODES=$((WNODES+RNODES))
-DIR_NAME=${SCALING}_${ENGINE}_${NWRITERS}
+DIR_NAME=${SCALING}_${ENGINE}_${NWRITERS}_${LEN}
 
 if [ ! -d $DIR_NAME ] ; then
     mkdir $DIR_NAME
