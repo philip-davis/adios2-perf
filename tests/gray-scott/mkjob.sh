@@ -39,15 +39,24 @@ if [ ${NNODES} -lt 128 ] ; then
     NNODES=128
 fi
 
-export NNODES
-if [ ! -f cfg/${MACHINE}.header ] ; then
-    echo "No cfg/${MACHINE}.header file"
+HEADER=cfg/${MACHINE}/header
+if [ ! -f ${HEADER} ] ; then
+    echo "No header file file for ${MACHINE}"
     exit
 fi
-envsubst '${NNODES}' < cfg/${MACHINE}.header > $DIR_NAME/job.sh
+
+export NNODES
+envsubst '${NNODES}' < ${HEADER} > $DIR_NAME/job.sh
+
+
+JOBTEMPL=cfg/${MACHINE}/job.${ENGINE}
+if [ ! -f ${JOBTEMPL} ] ; then
+    echo "No job script template for ${MACHINE} and ${ENGINE}"
+    exit
+fi
 
 export WNODES RNODES NWRITERS NREADERS
-envsubst '$WNODES $RNODES $NWRITERS $NREADERS' < cfg/job.${ENGINE} >> $DIR_NAME/job.sh
+envsubst '$WNODES $RNODES $NWRITERS $NREADERS' < ${JOBTEMPL} >> $DIR_NAME/job.sh
 
 export SIZE ENGINE
 envsubst '$SIZE $ENGINE' < cfg/cfg.json > $DIR_NAME/cfg.json
