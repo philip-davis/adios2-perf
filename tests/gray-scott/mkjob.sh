@@ -1,5 +1,7 @@
 #!/bin/bash
 
+MACHINE=theta
+
 SCALING=$1
 ENGINE=$2
 NWRITERS=$3
@@ -34,8 +36,16 @@ if [ ! -d $DIR_NAME ] ; then
     mkdir $DIR_NAME
 fi
 
+if [ ${NNODES} -lt 128 ] ; then
+    NNODES=128
+fi
+
 export NNODES
-envsubst '${NNODES}' < cfg/cori.header > $DIR_NAME/job.sh
+if [ ! -f cfg/${MACHINE}.header ] ; then
+    echo "No cfg/${MACHINE}.header file"
+    exit
+fi
+envsubst '${NNODES}' < cfg/${MACHINE}.header > $DIR_NAME/job.sh
 
 export WNODES RNODES NWRITERS NREADERS
 envsubst '$WNODES $RNODES $NWRITERS $NREADERS' < cfg/job.${ENGINE} >> $DIR_NAME/job.sh
