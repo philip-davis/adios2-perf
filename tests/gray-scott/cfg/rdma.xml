@@ -6,14 +6,14 @@
         ============================================-->
 
     <io name="SimulationOutput">
-        <engine type="BP4">
+        <engine type="SST">
             <!-- SST engine parameters -->
             <parameter key="RendezvousReaderCount" value="0"/>
             <parameter key="QueueLimit" value="1"/>
             <parameter key="QueueFullPolicy" value="Discard"/>
+            <parameter key="DataTransport" value="RDMAh" />
             <!-- BP4/SST engine parameters -->
             <parameter key="OpenTimeoutSecs" value="10.0"/>
-            <parameter key="SubStreams" value="8"/>
         </engine>
     </io>
 
