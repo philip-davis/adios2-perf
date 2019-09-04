@@ -1,10 +1,6 @@
-<<<<<<< HEAD
-MACHINE=theta
-=======
 #!/bin/bash
 
 MACHINE=cori
->>>>>>> 3334651b9f2c23fc9dcf801c921ca6bf67e88068
 
 INSTALL_DIR=${PWD}/install
 ADIOS2_DIR=${INSTALL_DIR}/ADIOS2
