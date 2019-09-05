@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MACHINE=theta
+MACHINE=cori
 
 SCALING=$1
 SIZE=$2
@@ -35,7 +35,7 @@ if [ ! -d $DIR_NAME ] ; then
     mkdir $DIR_NAME
 fi
 
-if [ ${NNODES} -lt 128 ] ; then
+if [ "${MACHINE}" == "theta" ] && [ ${NNODES} -lt 128 ] ; then
     NNODES=128
 fi
 
@@ -58,6 +58,6 @@ fi
 export WNODES RNODES NWRITERS NREADERS
 envsubst '$WNODES $RNODES $NWRITERS $NREADERS' < ${JOBTEMPL} >> $DIR_NAME/job.sh
 
-export SIZE ENGINE
-envsubst '$SIZE $ENGINE' < cfg/cfg.json > $DIR_NAME/cfg.json
+export SIZE ENGINE LEN
+envsubst '$SIZE $ENGINE $LEN' < cfg/cfg.json > $DIR_NAME/cfg.json
 cp cfg/${ENGINE}.xml $DIR_NAME/adios2.xml
