@@ -7,6 +7,16 @@ SIZE=$2
 ENGINE=$3
 NWRITERS=$4
 
+PPN=
+if [ "$MACHINE" == "cori" ] ; then
+    PPN=32
+elif [ "$MACHINE" == "theta" ] ; then
+    PPN=64
+else
+    echo "unkown machine: ${MACHINE}"
+    exit
+fi
+
 if [ "$SCALING" == "strong" ] ; then
     LEN=$SIZE
 elif [ "$SCALING" == "weak" ] ; then
@@ -21,10 +31,21 @@ elif [ "$SCALING" == "weak" ] ; then
 else exit
 fi
 
-WNODES=$((NWRITERS / 32))
+SUBSTREAMS=1
+if [ "$MACHINE" == "cori" ] ; then
+    SUBSTREAMS=2
+elif [ "$MACHINE" == "theta" ] ; then
+    SUBSTREAMS=4
+else
+    echo "unkown machine: ${MACHINE}"
+    exit
+fi
+
+WNODES=$((NWRITERS / PPN))
 NREADERS=$((NWRITERS / 32))
-RNODES=$((NREADERS / 32))
-while [ $((32 * RNODES)) -lt $NREADERS ] ; do
+RNODES=$((NREADERS / PPN))
+
+while [ $((PPN * RNODES)) -lt $NREADERS ] ; do
     RNODES=$((RNODES + 1))
 done
 
@@ -35,7 +56,7 @@ if [ ! -d $DIR_NAME ] ; then
     mkdir $DIR_NAME
 fi
 
-if [ ${NNODES} -lt 128 ] ; then
+if [ "${MACHINE}" == "theta" ] && [ ${NNODES} -lt 128 ] ; then
     NNODES=128
 fi
 
@@ -55,9 +76,12 @@ if [ ! -f ${JOBTEMPL} ] ; then
     exit
 fi
 
-export WNODES RNODES NWRITERS NREADERS
-envsubst '$WNODES $RNODES $NWRITERS $NREADERS' < ${JOBTEMPL} >> $DIR_NAME/job.sh
+export WNODES RNODES NWRITERS NREADERS PPN
+envsubst '$WNODES $RNODES $NWRITERS $NREADERS $PPN' < ${JOBTEMPL} >> $DIR_NAME/job.sh
+chmod a+x $DIR_NAME/job.sh
 
-export SIZE ENGINE
-envsubst '$SIZE $ENGINE' < cfg/cfg.json > $DIR_NAME/cfg.json
-cp cfg/${ENGINE}.xml $DIR_NAME/adios2.xml
+export SIZE ENGINE LEN
+envsubst '$SIZE $ENGINE $LEN' < cfg/cfg.json > $DIR_NAME/cfg.json
+
+export SUBSTREAMS
+envsubst '$SUBSTREAMS' cfg/${ENGINE}.xml $DIR_NAME/adios2.xml

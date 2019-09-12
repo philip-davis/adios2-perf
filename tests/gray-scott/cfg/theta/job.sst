@@ -1,7 +1,17 @@
 rm -rf *.bp
 
+WPPN=$PPN
+if [ $PPN -gt $NWRITERS ] ; then
+    WPPN=$NWRITERS
+fi
+
+RPPN=$PPN
+if [ $PPN -gt $NREADERS ] ; then
+    RPPN=$NREADERS
+fi
+
 echo "WF Start: $(date +%s)"
-srun -n ${NWRITERS} -N ${WNODES} gray-scott cfg.json &
-srun -n ${NREADERS} -N ${RNODES} pdf_calc gs.bp pdf.bp 100 &
+aprun -p davis-test -n ${NWRITERS} -N ${WPPN} gray-scott cfg.json &
+aprun -p davis-test -n ${NREADERS} -N ${RPPN} pdf_calc gs.bp pdf.bp 100 &
 wait
 echo "WF Finish: $(date +%s)"
