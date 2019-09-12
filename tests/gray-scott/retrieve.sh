@@ -1,8 +1,6 @@
 #!/bin/bash
 
-OUTEXT=
-
-MACHINE=cori
+MACHINE=theta
 if [ "${MACHINE}" == "cori" ] ; then
     OUTEXT=output
 elif [ "${MACHINE}" == "theta" ] ; then
