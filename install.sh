@@ -1,10 +1,6 @@
-<<<<<<< HEAD
-MACHINE=theta
-=======
-#!/bin/bash
+#!/bin/bash -e
 
-MACHINE=cori
->>>>>>> 3334651b9f2c23fc9dcf801c921ca6bf67e88068
+MACHINE=theta
 
 INSTALL_DIR=${PWD}/install
 ADIOS2_DIR=${INSTALL_DIR}/ADIOS2
@@ -22,6 +18,7 @@ elif [ "${MACHINE}" == "theta" ] ; then
     module unload darshan
     module load cmake/3.14.5
     module load cray-python/3.6.5.3
+    export CRAYPE_LINK_TYPE=dynamic
     export CC=cc
     export CXX=CC
     export FC=ftn
@@ -32,7 +29,7 @@ if [ ! -d ${LIBFABRIC_DIR} ] ; then
 fi
 cd libfabric
 ./autogen.sh
-./configure --prefix=${LIBFABRIC_DIR}
+./configure --prefix=${LIBFABRIC_DIR} --disable-verbs --disable-usnic
 make clean
 make
 make install
@@ -48,8 +45,9 @@ if [ ! -d build ] ; then
     mkdir build
 fi
 cd build
-cmake .. -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_Fortran_COMPILER=${FC} -DCMAKE_BUILD_TYPE=shared -DCMAKE_INSTALL_PREFIX=${ADIOS2_DIR}
-make
+rm -f CMakeCache.txt
+cmake .. -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_Fortran_COMPILER=${FC} -DCMAKE_BUILD_TYPE=shared -DCMAKE_INSTALL_PREFIX=${ADIOS2_DIR} -DADIOS2_USE_PNG=Off -DADIOS2_USE_BZIP=Off
+make -j
 make install
 
 export PYTHONPATH=$PYTHONPATH:${ADIOS2_DIR}/lib64/python3.6/site-packages
@@ -59,4 +57,9 @@ rm -rf build
 mkdir build
 cd build
 cmake .. -DADIOS2_DIR=${ADIOS2_DIR}/lib64/cmake/adios2 #-DUSE_TIMERS=Yes
-make
+make -j
+
+cd ../../../..
+cd tau2
+./configure -mpi -pthread -bfd=download
+make install
