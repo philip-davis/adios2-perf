@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MACHINE=cori
+MACHINE=theta
 
 SCALING=$1
 SIZE=$2
@@ -8,10 +8,13 @@ ENGINE=$3
 NWRITERS=$4
 
 PPN=
+RPPN=
 if [ "$MACHINE" == "cori" ] ; then
     PPN=32
+    RPPN=4
 elif [ "$MACHINE" == "theta" ] ; then
-    PPN=64
+    PPN=32
+    RPPN=4
 else
     echo "unkown machine: ${MACHINE}"
     exit
@@ -33,9 +36,9 @@ fi
 
 WNODES=$((NWRITERS / PPN))
 NREADERS=$((NWRITERS / 32))
-RNODES=$((NREADERS / PPN))
+RNODES=$((NREADERS / RPPN))
 
-while [ $((PPN * RNODES)) -lt $NREADERS ] ; do
+while [ $((RPPN * RNODES)) -lt $NREADERS ] ; do
     RNODES=$((RNODES + 1))
 done
 
@@ -77,8 +80,8 @@ if [ ! -f ${JOBTEMPL} ] ; then
     exit
 fi
 
-export WNODES RNODES NWRITERS NREADERS PPN
-envsubst '$WNODES $RNODES $NWRITERS $NREADERS $PPN' < ${JOBTEMPL} >> $DIR_NAME/job.sh
+export WNODES RNODES NWRITERS NREADERS PPN RPPN
+envsubst '$WNODES $RNODES $NWRITERS $NREADERS $PPN $RPPN' < ${JOBTEMPL} >> $DIR_NAME/job.sh
 chmod a+x $DIR_NAME/job.sh
 
 export SIZE ENGINE LEN
