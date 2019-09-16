@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MACHINE=theta
+MACHINE=cori
 
 SCALING=$1
 SIZE=$2
@@ -31,16 +31,6 @@ elif [ "$SCALING" == "weak" ] ; then
 else exit
 fi
 
-SUBSTREAMS=1
-if [ "$MACHINE" == "cori" ] ; then
-    SUBSTREAMS=2
-elif [ "$MACHINE" == "theta" ] ; then
-    SUBSTREAMS=4
-else
-    echo "unkown machine: ${MACHINE}"
-    exit
-fi
-
 WNODES=$((NWRITERS / PPN))
 NREADERS=$((NWRITERS / 32))
 RNODES=$((NREADERS / PPN))
@@ -48,6 +38,17 @@ RNODES=$((NREADERS / PPN))
 while [ $((PPN * RNODES)) -lt $NREADERS ] ; do
     RNODES=$((RNODES + 1))
 done
+
+SUBSTREAMS=1
+if [ "$MACHINE" == "cori" ] ; then
+    SUBSTREAMS=$((WNODES*2))
+elif [ "$MACHINE" == "theta" ] ; then
+    SUBSTREAMS=$((WNODES*4))
+else
+    echo "unkown machine: ${MACHINE}"
+    exit
+fi
+
 
 NNODES=$((WNODES+RNODES))
 DIR_NAME=${SCALING}_${ENGINE}_${NWRITERS}_${LEN}
@@ -84,4 +85,4 @@ export SIZE ENGINE LEN
 envsubst '$SIZE $ENGINE $LEN' < cfg/cfg.json > $DIR_NAME/cfg.json
 
 export SUBSTREAMS
-envsubst '$SUBSTREAMS' cfg/${ENGINE}.xml $DIR_NAME/adios2.xml
+envsubst '$SUBSTREAMS' < cfg/${ENGINE}.xml > $DIR_NAME/adios2.xml
