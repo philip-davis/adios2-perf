@@ -1,5 +1,5 @@
 #!/bin/bash
-#COBALT -t 30
+#COBALT -t 60
 #COBALT -n ${NNODES}
 #COBALT --attrs mcdram=cache:numa=quad
 #COBALT -A CSC250STDM11

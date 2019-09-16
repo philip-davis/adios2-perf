@@ -5,13 +5,16 @@ if [ $PPN -gt $NWRITERS ] ; then
     WPPN=$NWRITERS
 fi
 
-RPPN=$PPN
-if [ $PPN -gt $NREADERS ] ; then
+RPPN=$RPPN
+if [ $RPPN -gt $NREADERS ] ; then
     RPPN=$NREADERS
 fi
 
+WDEPTH=$((256/WPPN))
+RDEPTH=$((256/RPPN))
+
 echo "WF Start: $(date +%s)"
-aprun -p davis-test -n ${NWRITERS} -N ${WPPN} gray-scott cfg.json &
-aprun -p davis-test -n ${NREADERS} -N ${RPPN} pdf_calc gs.bp pdf.bp 100 &
+aprun -p davis-test -n ${NWRITERS} -N ${WPPN} -j 4 -d $WDEPTH -cc depth gray-scott cfg.json &
+aprun -p davis-test -n ${NREADERS} -N ${RPPN} -j 4 -d $RDEPTH -cc depth pdf_calc gs.bp pdf.bp 100 &
 wait
 echo "WF Finish: $(date +%s)"

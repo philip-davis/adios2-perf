@@ -5,8 +5,8 @@ if [ $PPN -gt $NWRITERS ] ; then
     WPPN=$NWRITERS
 fi
 
-RPPN=$PPN
-if [ $PPN -gt $NREADERS ] ; then
+RPPN=$RPPN
+if [ $RPPN -gt $NREADERS ] ; then
     RPPN=$NREADERS
 fi
 
