@@ -2,9 +2,9 @@
 
 MACHINE=theta
 if [ "${MACHINE}" == "cori" ] ; then
-    OUTEXT=output
-elif [ "${MACHINE}" == "theta" ] ; then
     OUTEXT=out
+elif [ "${MACHINE}" == "theta" ] ; then
+    OUTEXT=output
 fi
 
 echo "scaling, engine, writer ranks, L, start time, end time"
