@@ -1,5 +1,4 @@
 #!/bin/bash -l
-#SBATCH -q premium
 #SBATCH -N ${NNODES}
 #SBATCH -t 00:30:00
 #SBATCH -L SCRATCH
