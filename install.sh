@@ -40,7 +40,7 @@ if [ ! -d ${LIBFABRIC_DIR} ] ; then
 fi
 cd libfabric
 ./autogen.sh
-./configure --prefix=${LIBFABRIC_DIR} --disable-usnic --disable-verbs CC=${CC}
+./configure --prefix=${LIBFABRIC_DIR} --disable-usnic CC=${CC}
 make clean
 make
 make install

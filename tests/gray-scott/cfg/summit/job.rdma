@@ -1,5 +1,7 @@
 rm -rf *.bp
 
+export FI_FORK_UNSAFE=Yes
+
 WPPN=$PPN
 if [ $PPN -gt $NWRITERS ] ; then
     WPPN=$NWRITERS

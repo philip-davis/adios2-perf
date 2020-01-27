@@ -77,7 +77,7 @@ if [ ! -f ${HEADER} ] ; then
     exit
 fi
 
-export NNODES
+export NNODES PERF_ROOT
 envsubst '${NNODES} ${PERF_ROOT}' < ${HEADER} > $DIR_NAME/job.sh
 
 
