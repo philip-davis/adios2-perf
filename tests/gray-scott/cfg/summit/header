@@ -1,0 +1,9 @@
+#!/bin/bash
+# Begin LSF directives
+#BSUB -P CSC143
+#BSUB -J test
+#BSUB -o tst.o%J
+#BSUB -W 00:30
+#BSUB -nnodes ${NNODES}
+
+export PATH=$PATH:${PERF_ROOT}/adiosvm/Tutorial/gray-scott/build

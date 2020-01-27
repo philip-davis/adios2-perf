@@ -1,6 +1,8 @@
 #!/bin/bash
 
-MACHINE=theta
+source ../common/.env
+
+MACHINE=${MACHINE:-summit}
 
 SCALING=$1
 SIZE=$2
@@ -13,6 +15,9 @@ if [ "$MACHINE" == "cori" ] ; then
     PPN=32
     RPPN=4
 elif [ "$MACHINE" == "theta" ] ; then
+    PPN=32
+    RPPN=4
+elif [ "$MACHINE" == "summit" ] ; then
     PPN=32
     RPPN=4
 else
@@ -47,6 +52,8 @@ if [ "$MACHINE" == "cori" ] ; then
     SUBSTREAMS=$((WNODES*2))
 elif [ "$MACHINE" == "theta" ] ; then
     SUBSTREAMS=$((WNODES*4))
+elif [ "$MACHINE" == "summit" ] ; then
+    SUBSTREAMS=$((WNODES*2))
 else
     echo "unkown machine: ${MACHINE}"
     exit
@@ -71,7 +78,7 @@ if [ ! -f ${HEADER} ] ; then
 fi
 
 export NNODES
-envsubst '${NNODES}' < ${HEADER} > $DIR_NAME/job.sh
+envsubst '${NNODES} ${PERF_ROOT}' < ${HEADER} > $DIR_NAME/job.sh
 
 
 JOBTEMPL=cfg/${MACHINE}/job.${ENGINE}

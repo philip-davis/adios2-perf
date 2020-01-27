@@ -5,4 +5,4 @@
 #COBALT -A CSC250STDM11
 #COBALT --queue default
 
-export PATH=$PATH:/projects/CSC250STDM11/pdavis/adios2-perf/adiosvm/Tutorial/gray-scott/build
+export PATH=$PATH:${PERF_ROOT}/adiosvm/Tutorial/gray-scott/build

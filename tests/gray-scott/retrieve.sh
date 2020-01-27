@@ -1,6 +1,7 @@
 #!/bin/bash
 
-MACHINE=theta
+MACHINE={$MACHINE:-summit}
+
 if [ "${MACHINE}" == "cori" ] ; then
     OUTEXT=out
 elif [ "${MACHINE}" == "theta" ] ; then

@@ -1,0 +1,17 @@
+rm -rf *.bp
+
+WPPN=$PPN
+if [ $PPN -gt $NWRITERS ] ; then
+    WPPN=$NWRITERS
+fi
+
+RPPN=$RPPN
+if [ $RPPN -gt $NREADERS ] ; then
+    RPPN=$NREADERS
+fi
+
+echo "WF Start: $(date +%s)"
+jsrun -n ${NWRITERS} -a 1 -r ${WPPN} -c 1 gray-scott cfg.json &
+jsrun -n ${NREADERS} -a 1 -r ${RPPN} -c 1 pdf_calc gs.bp pdf.bp 100 &
+wait
+echo "WF Finish: $(date +%s)"

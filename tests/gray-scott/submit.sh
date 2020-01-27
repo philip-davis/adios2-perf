@@ -1,9 +1,22 @@
 #!/bin/bash -x
 
+MACHINE=${MACHINE:-summit}
+SUBMIT=
+if [ "${MACHINE}" == "theta" ] ; then
+    SUBMIT=qsub
+elif [ "${MACHINE}" == "cori" ] ; then
+    SUBMIT=sbatch
+elif [ "${MACHINE}" == "summit" ] ; then
+    SUBMIT=bsub
+else
+    echo "Unknown platform: can't submit jobs"
+    exit
+fi
+
 for jobdir in $(find -maxdepth 1 -iname '*_*_*_*' | sort -t _ -k 3 -n) ; do
     if [ ! -f $jobdir/submitted ] ; then
         cd $jobdir
-        qsub -M philip.e.davis@rutgers.edu job.sh &> submitted
+        ${SUBMIT} job.sh &> submitted
         result=$?
         cd ..
     fi
