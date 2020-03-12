@@ -1,0 +1,20 @@
+rm -rf conf* srv.lck*
+rm -rf dataspaces.conf
+echo "## Config file for DataSpaces
+ndim = 3
+dims = 32768,32768,32768
+max_versions = 50
+lock_type = 2
+"> dataspaces.conf
+srun -n ${NSTAGERS} -N ${SNODES} dataspaces_server -s ${NSTAGERS} >& server_"${NSTAGERS}".log&
+DSPID=$!
+while [ ! -f conf ]; do
+	sleep 1
+done
+sleep 5
+echo "WF Start: $(date +%s)"
+srun -n ${NWRITERS} -N ${WNODES} gray-scott cfg.json >& writer_"${NWRITERS}".log&
+srun -n ${NREADERS} -N ${RNODES} pdf_calc gs.bp pdf.bp 100 >& reader_"${NREADERS}".log
+echo "WF Finish: $(date +%s)"
+sleep 5
+kill ${DSPID}

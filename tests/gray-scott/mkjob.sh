@@ -8,6 +8,7 @@ SCALING=$1
 SIZE=$2
 ENGINE=$3
 NWRITERS=$4
+S2WRATIO=$5
 
 PPN=
 RPPN=
@@ -47,6 +48,14 @@ while [ $((RPPN * RNODES)) -lt $NREADERS ] ; do
     RNODES=$((RNODES + 1))
 done
 
+SNODES=0
+NSTAGERS=0
+if [ "$ENGINE" == "dataspaces" ] ; then
+        NSTAGERS=$((NWRITERS / S2WRATIO))
+        #SNODES=$(((NSTAGERS + 4 -1) / 4))
+        SNODES=32
+fi
+
 SUBSTREAMS=1
 if [ "$MACHINE" == "cori" ] ; then
     SUBSTREAMS=$((WNODES*2))
@@ -60,7 +69,7 @@ else
 fi
 
 
-NNODES=$((WNODES+RNODES))
+NNODES=$((WNODES+RNODES+SNODES))
 DIR_NAME=${SCALING}_${ENGINE}_${NWRITERS}_${LEN}
 
 if [ ! -d $DIR_NAME ] ; then
@@ -76,9 +85,14 @@ if [ ! -f ${HEADER} ] ; then
     echo "No header file file for ${MACHINE}"
     exit
 fi
+if [ "$ENGINE" == "dataspaces" ] ; then
+    export NNODES PERF_ROOT DSPACES_INSTALL
+    envsubst '${NNODES} ${PERF_ROOT} ${DSPACES_INSTALL}' < ${HEADER} > $DIR_NAME/job.sh
+else
+    export NNODES PERF_ROOT
+    envsubst '${NNODES} ${PERF_ROOT}' < ${HEADER} > $DIR_NAME/job.sh
+fi
 
-export NNODES PERF_ROOT
-envsubst '${NNODES} ${PERF_ROOT}' < ${HEADER} > $DIR_NAME/job.sh
 
 
 JOBTEMPL=cfg/${MACHINE}/job.${ENGINE}
@@ -87,8 +101,8 @@ if [ ! -f ${JOBTEMPL} ] ; then
     exit
 fi
 
-export WNODES RNODES NWRITERS NREADERS PPN RPPN
-envsubst '$WNODES $RNODES $NWRITERS $NREADERS $PPN $RPPN' < ${JOBTEMPL} >> $DIR_NAME/job.sh
+export WNODES RNODES NWRITERS NREADERS PPN RPPN SNODES NSTAGERS
+envsubst '$WNODES $RNODES $NWRITERS $NREADERS $PPN $RPPN $SNODES $NSTAGERS' < ${JOBTEMPL} >> $DIR_NAME/job.sh
 chmod a+x $DIR_NAME/job.sh
 
 export SIZE ENGINE LEN
