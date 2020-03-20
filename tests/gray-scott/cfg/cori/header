@@ -8,3 +8,4 @@
 #SBATCH -A m499
 
 export PATH=$PATH:${PERF_ROOT}/adiosvm/Tutorial/gray-scott/build
+export PATH=$PATH:${DSPACES_INSTALL}/bin
