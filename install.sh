@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
 MACHINE=${MACHINE:-rhea}
+BUILD_TAU=OFF
 
 INSTALL_DIR=${PWD}/install
 ADIOS2_DIR=${INSTALL_DIR}/ADIOS2
@@ -66,7 +67,7 @@ if [ ! -d build ] ; then
 fi
 cd build
 rm -f CMakeCache.txt
-cmake .. -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_Fortran_COMPILER=${FC} -DCMAKE_BUILD_TYPE=shared -DCMAKE_INSTALL_PREFIX=${ADIOS2_DIR} -DADIOS2_USE_PNG=Off -DADIOS2_USE_BZIP=Off ${MACHINE_CMAKE_FLAGS}
+cmake .. -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_Fortran_COMPILER=${FC} -DCMAKE_BUILD_TYPE=shared -DCMAKE_INSTALL_PREFIX=${ADIOS2_DIR} -DADIOS2_USE_PNG=Off -DADIOS2_USE_BZIP=Off -DADIOS2_USE_HDF5=Off ${MACHINE_CMAKE_FLAGS}
 make -j
 make install
 
@@ -80,9 +81,10 @@ cmake .. -DADIOS2_DIR=${ADIOS2_DIR}/lib64/cmake/adios2 #-DUSE_TIMERS=Yes
 make -j
 
 cd ../../../..
-cd tau2
-./configure -mpi -pthread -bfd=download
-make install
-cd ..
-
+if [ "${BUILD_TAU}" == "ON" ] ; then
+    cd tau2
+    ./configure -mpi -pthread -bfd=download
+    make install
+    cd ..
+fi
 ./createenv.sh
