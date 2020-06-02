@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-MACHINE=${MACHINE:-summit}
+MACHINE=${MACHINE:-rhea}
 
 INSTALL_DIR=${PWD}/install
 ADIOS2_DIR=${INSTALL_DIR}/ADIOS2
@@ -26,6 +26,12 @@ elif [ "${MACHINE}" == "summit" ] ; then
     module unload darshan-runtime
     module load cmake
     module load python/3.6.6-anaconda3-5.3.0
+    export CC=mpicc
+    export CXX=mpic++
+    export FC=mpifort
+elif [ "${MACHINE}" == "rhea" ] ; then
+    module load cmake
+    module load python/3.7.0-anaconda3-2018.12
     export CC=mpicc
     export CXX=mpic++
     export FC=mpifort
